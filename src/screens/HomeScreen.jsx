@@ -13,6 +13,8 @@ import LoadingIndicator from '../components/LoadingIndicator';
 import UserCard from '../components/UserCard';
 import NavigationButtons from '../components/NavigationButtons';
 import {FONTS} from '../styles/typography';
+import {useTheme} from '../context/ThemeContext';
+import ThemeToggleButton from '../components/ThemeToggleButton';
 
 const HomeScreen = () => {
   const {
@@ -27,6 +29,8 @@ const HomeScreen = () => {
     isFirstUser,
     isLastUser,
   } = useUserData();
+
+  const {theme} = useTheme();
 
   // Track direction of navigation for animation
   const [animationDirection, setAnimationDirection] = useState(0);
@@ -62,28 +66,29 @@ const HomeScreen = () => {
 
   if (error) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
+      <View
+        style={[styles.errorContainer, {backgroundColor: theme.background}]}>
+        <Text style={[styles.errorText, {color: theme.primary}]}>{error}</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      {/* Explicitly set status bar for consistent behavior */}
+    <View style={[styles.container, {backgroundColor: theme.background}]}>
       <StatusBar
-        barStyle="light-content"
-        backgroundColor="#000000"
+        barStyle={theme.statusBar}
+        backgroundColor={theme.background}
         translucent={true}
       />
 
-      {/* Add a spacer for status bar height */}
-      <View style={styles.statusBarSpacer} />
+      <View
+        style={[styles.statusBarSpacer, {backgroundColor: theme.background}]}
+      />
 
-      {/* Content starts after status bar spacer */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>User Data</Text>
+      <View style={[styles.header, {borderBottomColor: theme.border}]}>
+        <Text style={[styles.headerTitle, {color: theme.text}]}>User Data</Text>
         <View style={styles.headerRight}>
+          <ThemeToggleButton />
           <View style={styles.userCountContainer}>
             <Text style={styles.userCount}>
               {currentUserIndex + 1}/{totalUsers}
@@ -93,14 +98,17 @@ const HomeScreen = () => {
       </View>
 
       {loadingMore && (
-        <Text style={styles.loadingMoreText}>Loading more users...</Text>
+        <Text style={[styles.loadingMoreText, {color: theme.textSecondary}]}>
+          Loading more users...
+        </Text>
       )}
 
       <View style={styles.cardContainer}>
         <UserCard user={currentUser} animationDirection={animationDirection} />
       </View>
 
-      <View style={styles.navigationContainer}>
+      <View
+        style={[styles.navigationContainer, {borderTopColor: theme.border}]}>
         <TouchableOpacity
           style={[styles.navButton, isFirstUser && styles.disabledButton]}
           onPress={handlePreviousUser}
@@ -122,12 +130,9 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
   },
-  // Add a spacer with the height of the status bar
   statusBarSpacer: {
     height: StatusBar.currentHeight || 0,
-    backgroundColor: '#000000',
   },
   header: {
     flexDirection: 'row',
@@ -136,22 +141,22 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#333',
   },
   headerTitle: {
     fontSize: 24,
     fontFamily: FONTS.bold,
-    color: '#FFFFFF',
   },
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 12,
   },
   userCountContainer: {
     backgroundColor: '#FC3D21',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
+    marginLeft: 8,
   },
   userCount: {
     color: 'white',
@@ -160,11 +165,10 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     flex: 1,
-    overflow: 'hidden', // Important for containing animations
+    overflow: 'hidden',
   },
   loadingMoreText: {
     textAlign: 'center',
-    color: '#666',
     marginVertical: 10,
     fontFamily: FONTS.regular,
   },
@@ -176,7 +180,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 18,
-    color: 'red',
     textAlign: 'center',
     fontFamily: FONTS.bold,
   },
@@ -186,12 +189,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderTopWidth: 1,
-    borderTopColor: '#333',
   },
   navButton: {
     backgroundColor: '#FC3D21',
     borderWidth: 0,
-    borderColor: 'white',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 24,

@@ -11,6 +11,7 @@ import {
   Easing,
 } from 'react-native';
 import {FONTS} from '../styles/typography';
+import {useTheme} from '../context/ThemeContext';
 
 const {width, height} = Dimensions.get('window');
 
@@ -124,6 +125,8 @@ const FloatingIcon = ({iconUrl, initialPosition, delay}) => {
 };
 
 const LandingScreen = ({onStartPress}) => {
+  const {theme} = useTheme();
+
   // Generate random positions for icons
   const iconPositions = userIcons.map((_, index) => {
     const margin = 60; // Keep icons away from edges
@@ -138,7 +141,8 @@ const LandingScreen = ({onStartPress}) => {
   });
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: theme.background}]}>
       {/* Floating background icons */}
       {iconPositions.map((icon, index) => (
         <FloatingIcon
@@ -149,22 +153,14 @@ const LandingScreen = ({onStartPress}) => {
         />
       ))}
 
-     
+      <View style={[styles.content, {zIndex: 2}]}>
+        <View style={styles.imageContainer}>{/* Your image component */}</View>
 
-      <View style={styles.content}>
-        <View style={styles.imageContainer}>
-          {/* <Image
-            source={{
-              uri: 'https://img.icons8.com/fluency/240/000000/user-group-man-woman.png',
-            }}
-            style={styles.image}
-            resizeMode="contain"
-          /> */}
-        </View>
+        <Text style={[styles.title, {color: theme.text}]}>
+          Welcome to User Explorer
+        </Text>
 
-        <Text style={styles.title}>Welcome to User Explorer</Text>
-
-        <Text style={styles.description}>
+        <Text style={[styles.description, {color: theme.textSecondary}]}>
           Discover profiles of 80 different users with detailed information
           including IDs, names, usernames, emails, and more. Navigate through
           the collection with intuitive controls.
@@ -176,7 +172,7 @@ const LandingScreen = ({onStartPress}) => {
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>
+        <Text style={[styles.footerText, {color: theme.textSecondary}]}>
           React Native Internship Assignment
         </Text>
       </View>

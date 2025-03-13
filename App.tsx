@@ -16,6 +16,7 @@ import {
 import HomeScreen from './src/screens/HomeScreen';
 import LandingScreen from './src/screens/LandingScreen';
 import { FONTS } from './src/styles/typography';
+import { ThemeProvider } from './src/context/ThemeContext';
 
 // Override default text styles globally
 Text.defaultProps = {
@@ -57,17 +58,13 @@ function App(): React.JSX.Element {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor="#000000"
-      />
+    <ThemeProvider>
       {showHome ? (
         <HomeScreen />
       ) : (
         <LandingScreen onStartPress={handleStartPress} />
       )}
-    </SafeAreaView>
+    </ThemeProvider>
   );
 }
 
@@ -81,6 +78,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     marginTop: 50,
+    fontFamily: FONTS.regular,
   }
 });
 
