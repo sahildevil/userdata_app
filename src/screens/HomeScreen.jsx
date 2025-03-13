@@ -1,9 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native';
 import useUserData from '../hooks/useUserData';
 import LoadingIndicator from '../components/LoadingIndicator';
 import UserCard from '../components/UserCard';
 import NavigationButtons from '../components/NavigationButtons';
+import {FONTS} from '../styles/typography';
 
 const HomeScreen = () => {
   const {
@@ -60,10 +67,20 @@ const HomeScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>User Information</Text>
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>User Data</Text>
+        <View style={styles.headerRight}>
+          <View style={styles.userCountContainer}>
+            <Text style={styles.userCount}>
+              {currentUserIndex + 1}/{totalUsers}
+            </Text>
+          </View>
+        </View>
+      </View>
 
-      {loadingMore && currentUserIndex === 0 && (
+      {loadingMore && (
         <Text style={styles.loadingMoreText}>Loading more users...</Text>
       )}
 
@@ -71,33 +88,68 @@ const HomeScreen = () => {
         <UserCard user={currentUser} animationDirection={animationDirection} />
       </View>
 
-      <NavigationButtons
-        onPrevious={handlePreviousUser}
-        onNext={handleNextUser}
-        isFirstUser={isFirstUser}
-        isLastUser={isLastUser}
-        currentIndex={currentUserIndex}
-        totalUsers={totalUsers}
-      />
-    </View>
+      <View style={styles.navigationContainer}>
+        <TouchableOpacity
+          style={[styles.navButton, isFirstUser && styles.disabledButton]}
+          onPress={handlePreviousUser}
+          disabled={isFirstUser}>
+          <Text style={styles.navButtonText}>Previous</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.navButton, isLastUser && styles.disabledButton]}
+          onPress={handleNextUser}
+          disabled={isLastUser}>
+          <Text style={styles.navButtonText}>Next</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#000000',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontFamily: FONTS.bold,
+    color: '#FFFFFF',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  userCountContainer: {
+    backgroundColor: '#FC3D21',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  userCount: {
+    color: 'white',
+    fontFamily: FONTS.bold,
+    fontSize: 14,
   },
   cardContainer: {
     flex: 1,
     overflow: 'hidden', // Important for containing animations
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  loadingMoreText: {
     textAlign: 'center',
-    marginVertical: 20,
-    color: '#333',
+    color: '#666',
+    marginVertical: 10,
+    fontFamily: FONTS.regular,
   },
   errorContainer: {
     flex: 1,
@@ -109,11 +161,33 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'red',
     textAlign: 'center',
+    fontFamily: FONTS.bold,
   },
-  loadingMoreText: {
-    textAlign: 'center',
-    color: '#666',
-    marginBottom: 10,
+  navigationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#333',
+  },
+  navButton: {
+    backgroundColor: '#FC3D21',
+    borderWidth:0,
+    borderColor:'white',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 24,
+    width: '45%',
+    alignItems: 'center',
+  },
+  navButtonText: {
+    color: 'white',
+    fontFamily: FONTS.bold,
+    fontSize: 16,
+  },
+  disabledButton: {
+    backgroundColor: '#CCCCCC',
   },
 });
 
