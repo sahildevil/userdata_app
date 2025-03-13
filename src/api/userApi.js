@@ -1,4 +1,4 @@
-export const fetchUsers = async (size = 80) => {
+export const fetchUsers = async (size = 10) => {
   try {
     const response = await fetch(
       `https://random-data-api.com/api/users/random_user?size=${size}`,
