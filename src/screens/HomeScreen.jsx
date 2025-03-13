@@ -5,6 +5,8 @@ import {
   Text,
   SafeAreaView,
   TouchableOpacity,
+  StatusBar,
+  Platform,
 } from 'react-native';
 import useUserData from '../hooks/useUserData';
 import LoadingIndicator from '../components/LoadingIndicator';
@@ -67,8 +69,18 @@ const HomeScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
+    <View style={styles.container}>
+      {/* Explicitly set status bar for consistent behavior */}
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="#000000"
+        translucent={true}
+      />
+
+      {/* Add a spacer for status bar height */}
+      <View style={styles.statusBarSpacer} />
+
+      {/* Content starts after status bar spacer */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>User Data</Text>
         <View style={styles.headerRight}>
@@ -103,13 +115,18 @@ const HomeScreen = () => {
           <Text style={styles.navButtonText}>Next</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000000',
+  },
+  // Add a spacer with the height of the status bar
+  statusBarSpacer: {
+    height: StatusBar.currentHeight || 0,
     backgroundColor: '#000000',
   },
   header: {
@@ -173,8 +190,8 @@ const styles = StyleSheet.create({
   },
   navButton: {
     backgroundColor: '#FC3D21',
-    borderWidth:0,
-    borderColor:'white',
+    borderWidth: 0,
+    borderColor: 'white',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 24,

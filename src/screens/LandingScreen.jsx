@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   startButton: {
-    backgroundColor: '#FF6B00',
+    backgroundColor: '#FC3D21',
     paddingVertical: 16,
     paddingHorizontal: 48,
     borderRadius: 30,
