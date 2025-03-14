@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 5,
   },
   userCountContainer: {
     backgroundColor: '#FC3D21',

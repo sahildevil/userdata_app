@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Animated,
   Dimensions,
   Easing,
+  StatusBar,
 } from 'react-native';
 import {FONTS} from '../styles/typography';
 import {useTheme} from '../context/ThemeContext';
@@ -27,78 +28,98 @@ const userIcons = [
   'https://img.icons8.com/color/48/000000/businesswoman--v1.png',
 ];
 
-// Component for a single floating icon
-const FloatingIcon = ({iconUrl, initialPosition, delay}) => {
+// Component for a single animated icon that moves out of the screen
+const FloatingIcon = ({iconUrl, initialPosition, delay, exitDirection}) => {
   const posX = useRef(new Animated.Value(initialPosition.x)).current;
   const posY = useRef(new Animated.Value(initialPosition.y)).current;
   const rotation = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0.7)).current;
+  const scale = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  // Calculate exit position based on direction
+  const getExitPosition = () => {
+    switch (exitDirection) {
+      case 'top':
+        return {x: initialPosition.x, y: -100};
+      case 'bottom':
+        return {x: initialPosition.x, y: height + 100};
+      case 'left':
+        return {x: -100, y: initialPosition.y};
+      case 'right':
+        return {x: width + 100, y: initialPosition.y};
+      default:
+        // Random diagonal exit
+        const randomCorner = Math.floor(Math.random() * 4);
+        switch (randomCorner) {
+          case 0:
+            return {x: -100, y: -100}; // top-left
+          case 1:
+            return {x: width + 100, y: -100}; // top-right
+          case 2:
+            return {x: -100, y: height + 100}; // bottom-left
+          case 3:
+            return {x: width + 100, y: height + 100}; // bottom-right
+        }
+    }
+  };
+
+  const exitPos = getExitPosition();
 
   useEffect(() => {
-    // Create horizontal movement
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(posX, {
-          toValue: initialPosition.x + (Math.random() * 80 - 40),
-          duration: 2000 + Math.random() * 3000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(posX, {
-          toValue: initialPosition.x,
-          duration: 2000 + Math.random() * 3000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-
-    // Create vertical movement
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(posY, {
-          toValue: initialPosition.y + (Math.random() * 80 - 40),
-          duration: 3000 + Math.random() * 2000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(posY, {
-          toValue: initialPosition.y,
-          duration: 3000 + Math.random() * 2000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-
-    // Rotation animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(rotation, {
-          toValue: 1,
-          duration: 5000 + Math.random() * 5000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotation, {
-          toValue: 0,
-          duration: 5000 + Math.random() * 5000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-
-    // Initial appear animation with delay
-    Animated.sequence([
-      Animated.delay(delay),
-      Animated.spring(scale, {
-        toValue: 1,
-        friction: 5,
-        tension: 40,
+    // First fade in and scale up
+    const appearAnimation = Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 0.7,
+        duration: 800,
+        delay,
         useNativeDriver: true,
       }),
-    ]).start();
+      Animated.spring(scale, {
+        toValue: 1,
+        friction: 6,
+        tension: 40,
+        delay,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    // Then move to exit position with rotation
+    const exitAnimation = Animated.parallel([
+      // X movement
+      Animated.timing(posX, {
+        toValue: exitPos.x,
+        duration: 3000 + Math.random() * 2000,
+        easing: Easing.inOut(Easing.ease),
+        delay: 1500 + Math.random() * 2000, // Random delay before exit
+        useNativeDriver: true,
+      }),
+      // Y movement
+      Animated.timing(posY, {
+        toValue: exitPos.y,
+        duration: 3000 + Math.random() * 2000,
+        easing: Easing.inOut(Easing.ease),
+        delay: 1500 + Math.random() * 2000, // Random delay before exit
+        useNativeDriver: true,
+      }),
+      // Rotation during exit
+      Animated.timing(rotation, {
+        toValue: 1,
+        duration: 3000 + Math.random() * 2000,
+        easing: Easing.inOut(Easing.ease),
+        delay: 1500 + Math.random() * 2000, // Same delay as movement
+        useNativeDriver: true,
+      }),
+      // Fade out during exit
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 1500,
+        delay: 3000 + Math.random() * 2000, // Start fade out near end of movement
+        useNativeDriver: true,
+      }),
+    ]);
+
+    // Run animations in sequence
+    Animated.sequence([appearAnimation, exitAnimation]).start();
   }, []);
 
   const spin = rotation.interpolate({
@@ -111,12 +132,15 @@ const FloatingIcon = ({iconUrl, initialPosition, delay}) => {
       style={[
         styles.floatingIcon,
         {
+          opacity,
           transform: [
             {translateX: posX},
             {translateY: posY},
             {rotate: spin},
             {scale: scale},
           ],
+          left: 0, // Position will be handled by translateX
+          top: 0, // Position will be handled by translateY
         },
       ]}>
       <Image source={{uri: iconUrl}} style={styles.iconImage} />
@@ -126,35 +150,104 @@ const FloatingIcon = ({iconUrl, initialPosition, delay}) => {
 
 const LandingScreen = ({onStartPress}) => {
   const {theme} = useTheme();
+  const [iconSet, setIconSet] = useState([]);
 
-  // Generate random positions for icons
-  const iconPositions = userIcons.map((_, index) => {
-    const margin = 60; // Keep icons away from edges
-    return {
-      icon: userIcons[index % userIcons.length],
-      position: {
-        x: margin + Math.random() * (width - 2 * margin),
-        y: margin + Math.random() * (height - 2 * margin),
-      },
-      delay: index * 150, // Staggered appearance
-    };
-  });
+  // Generate a new set of icons for animation every 6 seconds
+  useEffect(() => {
+    // Generate initial set
+    generateNewIconSet();
+
+    // Set up interval to regenerate icons
+    const intervalId = setInterval(() => {
+      generateNewIconSet();
+    }, 6000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // Function to generate a new set of icons
+  const generateNewIconSet = () => {
+    const newIcons = [];
+    const iconCount = 8; // Total icons per set
+
+    for (let i = 0; i < iconCount; i++) {
+      // Randomly position icons around the edge of the screen
+      const side = Math.floor(Math.random() * 4); // 0=top, 1=right, 2=bottom, 3=left
+      let position, exitDirection;
+
+      switch (side) {
+        case 0: // Top
+          position = {
+            x: Math.random() * width,
+            y: -20,
+          };
+          exitDirection = 'bottom';
+          break;
+        case 1: // Right
+          position = {
+            x: width + 20,
+            y: Math.random() * height,
+          };
+          exitDirection = 'left';
+          break;
+        case 2: // Bottom
+          position = {
+            x: Math.random() * width,
+            y: height + 20,
+          };
+          exitDirection = 'top';
+          break;
+        case 3: // Left
+          position = {
+            x: -20,
+            y: Math.random() * height,
+          };
+          exitDirection = 'right';
+          break;
+      }
+
+      newIcons.push({
+        id: `icon-${Date.now()}-${i}`,
+        icon: userIcons[i % userIcons.length],
+        position,
+        delay: i * 200,
+        exitDirection,
+      });
+    }
+
+    // Add new icons to existing set (they'll animate out automatically)
+    setIconSet(prev => [...prev, ...newIcons]);
+
+    // Clean up old icons after they've animated out (after 10 seconds)
+    setTimeout(() => {
+      setIconSet(prev =>
+        prev.filter(
+          icon => icon.id.startsWith(`icon-${Date.now() - 10000}`) === false,
+        ),
+      );
+    }, 10000);
+  };
 
   return (
     <SafeAreaView
       style={[styles.container, {backgroundColor: theme.background}]}>
-      {/* Floating background icons */}
-      {iconPositions.map((icon, index) => (
-        <FloatingIcon
-          key={`icon-${index}`}
-          iconUrl={icon.icon}
-          initialPosition={icon.position}
-          delay={icon.delay}
-        />
-      ))}
+      <StatusBar
+        barStyle={theme.statusBar}
+        backgroundColor={theme.background}
+        translucent={true}
+      />
 
-      <View style={[styles.content, {zIndex: 2}]}>
-        <View style={styles.imageContainer}>{/* Your image component */}</View>
+      {/* Content */}
+      <View style={styles.content}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{
+              uri: 'https://static.vecteezy.com/system/resources/previews/035/727/704/non_2x/3d-realistic-person-or-people-user-social-network-icon-3d-rendering-illustration-vector.jpg',
+            }}
+            style={styles.image}
+            resizeMode="contain"
+          />
+        </View>
 
         <Text style={[styles.title, {color: theme.text}]}>
           Welcome to User Explorer
@@ -171,6 +264,17 @@ const LandingScreen = ({onStartPress}) => {
         </TouchableOpacity>
       </View>
 
+      {/* Floating background icons */}
+      {iconSet.map(icon => (
+        <FloatingIcon
+          key={icon.id}
+          iconUrl={icon.icon}
+          initialPosition={icon.position}
+          delay={icon.delay}
+          exitDirection={icon.exitDirection}
+        />
+      ))}
+
       <View style={styles.footer}>
         <Text style={[styles.footerText, {color: theme.textSecondary}]}>
           React Native Internship Assignment
@@ -185,26 +289,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333333',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontFamily: FONTS.bold,
-    color: '#FFFFFF',
-  },
   content: {
     flex: 1,
     paddingHorizontal: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 2, // Make sure content is above floating icons
+    zIndex: 2,
   },
   imageContainer: {
     marginBottom: 40,
@@ -212,6 +302,9 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
+    borderRadius: 100,
+    borderWidth: 4,
+    borderColor: '#FC3D21',
   },
   title: {
     fontSize: 28,
@@ -255,12 +348,12 @@ const styles = StyleSheet.create({
   },
   floatingIcon: {
     position: 'absolute',
-    zIndex: 1, // Below the main content
+    zIndex: 1,
   },
   iconImage: {
     width: 36,
     height: 36,
-    opacity: 0.6, // Semi-transparent
+    opacity: 0.7,
   },
 });
 

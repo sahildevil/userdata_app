@@ -12,11 +12,13 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  View,
+  ActivityIndicator,
 } from 'react-native';
 import HomeScreen from './src/screens/HomeScreen';
 import LandingScreen from './src/screens/LandingScreen';
 import { FONTS } from './src/styles/typography';
-import { ThemeProvider } from './src/context/ThemeContext';
+import { ThemeProvider, useTheme } from './src/context/ThemeContext';
 
 // Override default text styles globally
 Text.defaultProps = {
@@ -30,13 +32,14 @@ TextInput.defaultProps = {
   style: { fontFamily: FONTS.regular }
 };
 
-function App(): React.JSX.Element {
+// App content component (inside ThemeProvider)
+const AppContent = () => {
   const [showHome, setShowHome] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState(false);
+  const { isThemeLoaded, theme } = useTheme();
 
   // Simulate font loading
   useEffect(() => {
-    // In real app, you might check if fonts are loaded here
     setFontsLoaded(true);
   }, []);
 
@@ -44,40 +47,41 @@ function App(): React.JSX.Element {
     setShowHome(true);
   };
 
-  if (!fontsLoaded) {
-    // Show a loading screen while fonts load
+  // Show loading screen while fonts or theme is loading
+  if (!fontsLoaded || !isThemeLoaded) {
     return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor="#000000"
-        />
+      <View style={[styles.loadingContainer, { backgroundColor: theme?.background || '#000000' }]}>
+        <ActivityIndicator size="large" color="#FC3D21" />
         <Text style={styles.loadingText}>Loading...</Text>
-      </SafeAreaView>
+      </View>
     );
   }
 
+  return showHome ? (
+    <HomeScreen />
+  ) : (
+    <LandingScreen onStartPress={handleStartPress} />
+  );
+};
+
+function App(): React.JSX.Element {
   return (
     <ThemeProvider>
-      {showHome ? (
-        <HomeScreen />
-      ) : (
-        <LandingScreen onStartPress={handleStartPress} />
-      )}
+      <AppContent />
     </ThemeProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
-    backgroundColor: '#000000',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loadingText: {
+    marginTop: 16,
+    fontSize: 16,
     color: '#FFFFFF',
-    fontSize: 18,
-    textAlign: 'center',
-    marginTop: 50,
     fontFamily: FONTS.regular,
   }
 });

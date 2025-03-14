@@ -1,10 +1,12 @@
 import React from 'react';
-import {TouchableOpacity, StyleSheet} from 'react-native';
+import {TouchableOpacity, StyleSheet, Text} from 'react-native';
 import {useTheme} from '../context/ThemeContext';
 import Icon from 'react-native-vector-icons/Feather';
 
 const ThemeToggleButton = () => {
-  const {isDark, toggleTheme, theme} = useTheme();
+  const {isDark, toggleTheme, theme, isThemeLoaded} = useTheme();
+  // Don't render until theme is loaded
+  if (!isThemeLoaded) return null;
 
   return (
     <TouchableOpacity
