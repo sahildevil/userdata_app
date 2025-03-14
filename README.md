@@ -1,97 +1,75 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# User Explorer App
 
-# Getting Started
+A React Native mobile application that allows users to explore and browse through detailed user profiles with an elegant and intuitive interface. Built with modern React Native practices and animations.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Screenshots
+![Untitled design (2)](https://github.com/user-attachments/assets/e4390805-754d-4595-b860-a75216e1bfe0)
+![Untitled design (5)](https://github.com/user-attachments/assets/83ebeee8-5320-41d6-8900-4d58f738138d)
 
-## Step 1: Start Metro
+## 📱 Features
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### 👤 User Profiles
+- View comprehensive user information including:
+  - First and last name
+  - Username
+  - User ID and UID
+  - Password (for demo purposes)
+  - Email address
+  - Profile avatar
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### 🎨 Theming System
+- **Dark/Light Mode Toggle**: Switch between dark and light themes with a single tap
+- **Persistent Theme Storage**: App remembers your preferred theme across sessions
+- **Adaptive UI Elements**: All components adapt to the selected theme
+- **Custom Space Mono Font**: Consistent typography using Google's Space Mono font
 
-```sh
-# Using npm
-npm start
+### 🌟 Modern UI/UX
+- **Animated Transitions**: Smooth animations when navigating between users
+- **Interactive Landing Screen**: Dynamic animated user icons that enter from screen edges and exit on opposite sides
+- **Intuitive Navigation**: Easily navigate through user profiles with "Previous" and "Next" buttons
+- **Status Indicators**: Clear visual feedback for loading states and user counts
 
-# OR using Yarn
-yarn start
-```
+### ⚡ Technical Features
+- **Pagination**: Efficient loading of user data in batches
+- **State Management**: Clean React hooks-based state management
+- **Responsive Design**: Works across different screen sizes and orientations
+- **Performance Optimized**: Native driver animations for smooth performance
+- **Error Handling**: Graceful error states with clear user feedback
 
-## Step 2: Build and run your app
+### 🔧 Developer Features
+- **Component Reusability**: Well-structured component architecture
+- **Context API**: Efficient state management using React Context
+- **Custom Hooks**: Separation of concerns with custom React hooks
+- **Consistent Styling**: Organized and maintainable style architecture
+- **Dynamic Asset Management**: Efficient handling of remote images and resources
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+## Installation & Setup
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/your-username/user-explorer-app.git
+   cd user-explorer-app
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Start the development server:
+   
+   For android:
+   ```sh
+   npm react-native run:android
+   ```
+   For IOS:
+   ```sh
+   npm react-native run:ios
+   ```
 
-### Android
 
-```sh
-# Using npm
-npm run android
+## Contributing
+Feel free to fork the repository and submit pull requests to enhance the project.
 
-# OR using Yarn
-yarn android
-```
+## License
+This project is licensed under the MIT License.
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## Contact
+For any queries or support, reach out via [sahilkumar.sk148@gmail.com].
